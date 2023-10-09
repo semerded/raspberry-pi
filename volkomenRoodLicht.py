@@ -1,10 +1,29 @@
 """
 volkomen rood stoplicht
 gemaakt door Sem Van Broekhoven
-
+copyright © 2023
+------------------------------------------------------------
+Op een 'volkomen rood kruispunt' staan 's avonds alle of sommige
+verkeerslichten op rood. Zodra er uit een bepaalde richting verkeer
+aankomt, springt aan die kant het licht op groen. Zo'n schakeling
+bouw je in het klein na: een doorgaande autoweg en een
+fietsersoversteekplaats. Overdag gaan de verkeerslichten op de
+autoweg elke twee minuten op rood.De verkeerslichten op de
+fietsersoversteekplaats staan dan 20 seconden lang op groen. 's
+Avonds zijn de verkeerslichten op de autoweg altijd groen, totdat er
+een fietser aankomt.De fietser wordt gedetecteerd doordat het licht
+van zijn fietslamp op een LDR valt; ook de daglichtsituatie wordt door
+deze LDR gedetecteerd. Ga uit van één fietser en één auto.De
+fietser heeft een LED koplamp, die ook brandt bij stilstand
+------------------------------------------------------------
+alleen voor eigen gebruik - geen commerciele doeleinde
+check zeker deze site https://eelslap.com/ 
+groetjes
+Sem
+6IICT
 """
-
-
+# witregel om de code makkelijker leesbaar te maken
+# start van de code
 from gpiozero import LED, LightSensor # import de componenten uit de library die je nodig hebt
 from time import sleep # om delay's toe te voegen
 # witregel om de code makkelijker leesbaar te maken
@@ -20,15 +39,15 @@ LDR = LightSensor(21) # zet de LDR op pin 21
 # witregel om de code makkelijker leesbaar te maken
 class stoplicht: # maak een class aan met de verschillende standen van het stoplicht
     def __init__(self, lichtRood, lichtGeel, lichtGroen) -> None: # maak de class aan en voeg de verschillende lichten toe
-        self.__lichtRood = lichtRood # 
-        self.__lichtGeel = lichtGeel
-        self.__lichtGroen = lichtGroen
+        self.__lichtRood = lichtRood # zet de functie van de class gelijk aan de ingegeven waarde
+        self.__lichtGeel = lichtGeel # zet de functie van de class gelijk aan de ingegeven waarde
+        self.__lichtGroen = lichtGroen # zet de functie van de class gelijk aan de ingegeven waarde
 # witregel om de code makkelijker leesbaar te maken
 # witregel om de code makkelijker leesbaar te maken    
     def Rood(self): # lichtstand rood
         self.__lichtRood.on() # zet lamp aan
-        self.__lichtGeel.off()
-        self.__lichtGroen.off()
+        self.__lichtGeel.off() # zet lamp uit
+        self.__lichtGroen.off() # zet lamp uit
 # witregel om de code makkelijker leesbaar te maken    
 # witregel om de code makkelijker leesbaar te maken   
     def Geel(self): # lichtstand geel
