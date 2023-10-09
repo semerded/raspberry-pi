@@ -61,8 +61,8 @@ class stoplicht: # maak een class aan met de verschillende standen van het stopl
 fietsLicht = stoplicht(FIETSROOD, FIETSGEEL, FIETSGROEN) # voeg de standen van de class aan de fietslichten toe
 autoLicht = stoplicht(AUTOROOD, AUTOGEEL, AUTOGROEN) # voeg de standen van de class aan de autolichten toe
 # witregel om de code makkelijker leesbaar te maken
-tijdGeel = 1 # de tijd dat het geel is
-tijdGroen = 5 # de tijd dat het groen/rood is
+tijdGeel = 3 # de tijd dat het geel is
+tijdGroen = 20 # de tijd dat het groen/rood is
 wachtTotDeDoorHetGeelRijdersVoorbijZijn = 1 # tijd tussen dat het ene licht op rood springt en het ander op groen
 # witregel om de code makkelijker leesbaar te maken
 # bij het starten van het programma staan de lichten op rood 
