@@ -66,6 +66,7 @@ autoLicht = stoplicht(AUTOROOD, AUTOGEEL, AUTOGROEN) # voeg de standen van de cl
 # witregel om de code makkelijker leesbaar te maken
 tijdGeel = 1 # de tijd dat het geel is
 tijdGroen = 5 # de tijd dat het groen/rood is
+wachtTotDeDoorHetGeelRijdersVoorbijZijn = 1 # tijd tussen dat het ene licht op rood springt en het ander op groen
 # witregel om de code makkelijker leesbaar te maken
 # bij het starten van het programma staan de lichten op rood 
 fietsLicht.Rood() # zet fietslicht op rood
@@ -74,18 +75,18 @@ sleep(tijdGroen) # tijd dat het licht rood blijft
 # witregel om de code makkelijker leesbaar te maken
 while True: # de loop die zich zal blijven herhalen
     if LDR.is_active: # als de LDR licht detecteerd
-        fietsLicht.Geel() # geel licht voor fietsers
-        autoLicht.Geel() # geel licht voor auto's
-        sleep(tijdGeel) # tijd dat het geel blijft
-        fietsLicht.Groen() # groen licht voor fietsers
-        autoLicht.Rood() # rood licht voor auto's
-        sleep(tijdGroen) # tijd dat het groen/rood blijft
-        fietsLicht.Geel() # geel licht voor fietsers
-        autoLicht.Geel() # geel licht voor auto's
-        sleep(tijdGeel) # tijd dat het geel blijft
-        fietsLicht.Rood() # rood licht voor fietsers
         autoLicht.Groen() # groen licht voor auto's
+        sleep(wachtTotDeDoorHetGeelRijdersVoorbijZijn) # wachtTotDeDoorHetGeelRijdersVoorbijZijn
+        fietsLicht.Rood() # rood licht voor fietsers
         sleep(tijdGroen) # tijd dat het groen/rood blijft
+        autoLicht.Geel() # geel licht voor auto's
+        sleep(tijdGeel) # tijd dat het geel blijft
+        autoLicht.Rood() # rood licht voor auto's
+        sleep(wachtTotDeDoorHetGeelRijdersVoorbijZijn) # wachtTotDeDoorHetGeelRijdersVoorbijZijn
+        fietsLicht.Groen() # groen licht voor fietsers
+        sleep(tijdGroen) # tijd dat het groen/rood blijft
+        fietsLicht.Geel() # geel licht voor fietsers
+        sleep(tijdGeel) # tijd dat het geel blijft
     else: # als het donker is
         autoLicht.Groen() # autolicht blijft op groen staan
         fietsLicht.Rood() # fietslicht blijft op rood staan
