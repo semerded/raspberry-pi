@@ -18,9 +18,6 @@ fietser heeft een LED koplamp, die ook brandt bij stilstand
 ------------------------------------------------------------
 alleen voor eigen gebruik - geen commerciele doeleinde
 check zeker deze site https://eelslap.com/ 
-groetjes
-Sem
-6IICT
 """
 # witregel om de code makkelijker leesbaar te maken
 # start van de code
