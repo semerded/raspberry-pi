@@ -10,10 +10,10 @@ tijdzone = time.tzname
 print(tijdzone) # tijdzone
 
 
-import math
+# import math
 
-print(math.pi)
-print(math.sqrt(math.pi))
-cirkelOmtrek = int(input("omtrek van cirkel: "))
-print(f"cirkel met diameter {cirkelOmtrek}cm heeft een omtrek van {math.pi * cirkelOmtrek}cm")
-print(round(math.pi * cirkelOmtrek))
+# print(math.pi)
+# print(math.sqrt(math.pi))
+# cirkelOmtrek = int(input("omtrek van cirkel: "))
+# print(f"cirkel met diameter {cirkelOmtrek}cm heeft een omtrek van {math.pi * cirkelOmtrek}cm")
+# print(round(math.pi * cirkelOmtrek))
