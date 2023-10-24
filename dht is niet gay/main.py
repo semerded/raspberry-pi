@@ -1,11 +1,11 @@
-from gpiozero import InputDevice
+import gpiozero as io
 from time import time, ctime
 from os.path import isfile
 import Adafruit_DHT
 
-BUTTON = InputDevice(11)
+BUTTON = io.Button(11)
 
-FILELOCATION = "savefile.txt"
+FILELOCATION = "DHT11log.txt"
 
 writeData = False
 previousTime = 0
@@ -15,21 +15,29 @@ if isfile(FILELOCATION) is False:
     file = open(FILELOCATION, "w")
     file.close()
     del file
+    
+def stateChangeDetection():
+    global writeData, previousTime, currentTime
+    writeData = not writeData
+    previousTime = currentTime
+    if writeData:
+        print("data logging started")
+    else:
+        print("data logging stopped")
 
+print("Sensor reader started (logging turned off)")
 while True:
     currentTime = time()
     
-    if BUTTON.is_active:
-        writeData = not writeData
-        if writeData:
-            print("data loging started")
-        else:
-            print("data loging stopped")
+    BUTTON.when_activated = stateChangeDetection
     if writeData:
+        vochtigheid, temperatuur = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4, 2)
         if currentTime - previousTime > timeBetweenLog:
-            vochtigheid, temperatuur = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4)
-            print("data loged")
-            
-            
-            with open(FILELOCATION, "a") as saveFile:
-                saveFile.writelines(f"{ctime} | temperature: {temperatuur}°C | humidity: {vochtigheid}%")
+            if vochtigheid != None and temperatuur != None:
+                with open(FILELOCATION, "a") as saveFile:
+                    logTime = ctime()
+                    print("data loged at %s" % logTime)
+                    saveFile.write(f"{logTime} | temperature: {temperatuur}°C | humidity: {vochtigheid}%\n")
+                previousTime = currentTime
+            else:
+                print("failed to read sensor")
