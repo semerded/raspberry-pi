@@ -75,9 +75,9 @@ sleep(tijdGroen) # tijd dat het licht rood blijft
 # witregel om de code makkelijker leesbaar te maken
 while True: # de loop die zich zal blijven herhalen
     if LDR.is_active: # als de LDR licht detecteerd
-        autoLicht.Groen() # groen licht voor auto's
-        sleep(wachtTotDeDoorHetGeelRijdersVoorbijZijn) # wachtTotDeDoorHetGeelRijdersVoorbijZijn
         fietsLicht.Rood() # rood licht voor fietsers
+        sleep(wachtTotDeDoorHetGeelRijdersVoorbijZijn) # wachtTotDeDoorHetGeelRijdersVoorbijZijn
+        autoLicht.Groen() # groen licht voor auto's
         sleep(tijdGroen) # tijd dat het groen/rood blijft
         autoLicht.Geel() # geel licht voor auto's
         sleep(tijdGeel) # tijd dat het geel blijft
