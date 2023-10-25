@@ -12,6 +12,11 @@ writeData = False
 previousTime = 0
 timeBetweenLog = 5 # tijd in seconden tussen elke log
 
+"""
+ik durf te wedden dat niemand dit heeft toegevoegd
+ik heb dit gedaan om het u wat gemakkelijker te maken
+(pluspuntjes?)
+"""
 if isfile(FILELOCATION) is False: # maakt het log bestand aan als deze nog niet bestaat
     file = open(FILELOCATION, "w")
     file.close()
