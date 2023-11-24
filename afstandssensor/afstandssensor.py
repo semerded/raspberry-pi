@@ -11,5 +11,5 @@ while True:
     currentTime = time()
     
     if currentTime - previousTime > delay:
-        print(f"afstand tot object is {sensor.distance}m")
+        print(f"afstand tot object is {round(sensor.distance * 100, 2)}cm")
 
