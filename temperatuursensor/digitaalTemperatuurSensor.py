@@ -1,7 +1,8 @@
 import time
-from w1thermsensor import W1ThermSensor
+from w1thermsensor import W1ThermSensor, SensorNotReadyError
 
 sensor = W1ThermSensor()
+
 
 while True:
     temperatuur = sensor.get_temperature()
