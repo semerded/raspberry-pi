@@ -1,0 +1,136 @@
+09:50:47 INFO     DHT11: 23.0 | DS18B20: 21.3125 | verschil: 1.6875
+09:50:49 INFO     DHT11: 23.0 | DS18B20: 21.3125 | verschil: 1.6875
+09:50:51 INFO     DHT11: 23.0 | DS18B20: 21.3125 | verschil: 1.6875
+09:50:53 INFO     DHT11: 23.0 | DS18B20: 21.3125 | verschil: 1.6875
+09:50:55 INFO     DHT11: 23.0 | DS18B20: 22.375 | verschil: 0.625
+09:50:59 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:51:02 INFO     DHT11: 23.0 | DS18B20: 21.75 | verschil: 1.25
+09:51:04 INFO     DHT11: 23.0 | DS18B20: 21.6875 | verschil: 1.3125
+09:51:06 INFO     DHT11: 23.0 | DS18B20: 21.6875 | verschil: 1.3125
+09:51:08 INFO     DHT11: 24.0 | DS18B20: 23.25 | verschil: 0.75
+09:51:10 INFO     DHT11: 25.0 | DS18B20: 24.25 | verschil: 0.75
+09:51:12 INFO     DHT11: 27.0 | DS18B20: 24.0 | verschil: 3.0
+09:51:12 WARNING  temperatuurverschil is hoger dan 2!
+09:51:14 INFO     DHT11: 27.0 | DS18B20: 24.5625 | verschil: 2.4375
+09:51:14 WARNING  temperatuurverschil is hoger dan 2!
+09:51:16 INFO     DHT11: 27.0 | DS18B20: 24.1875 | verschil: 2.8125
+09:51:16 WARNING  temperatuurverschil is hoger dan 2!
+09:51:18 INFO     DHT11: 27.0 | DS18B20: 23.9375 | verschil: 3.0625
+09:51:18 WARNING  temperatuurverschil is hoger dan 2!
+09:51:21 INFO     DHT11: 27.0 | DS18B20: 23.6875 | verschil: 3.3125
+09:51:21 WARNING  temperatuurverschil is hoger dan 2!
+09:51:23 INFO     DHT11: 27.0 | DS18B20: 23.625 | verschil: 3.375
+09:51:23 WARNING  temperatuurverschil is hoger dan 2!
+09:51:25 INFO     DHT11: 27.0 | DS18B20: 23.5 | verschil: 3.5
+09:51:25 WARNING  temperatuurverschil is hoger dan 2!
+09:51:28 INFO     DHT11: 27.0 | DS18B20: 23.375 | verschil: 3.625
+09:51:28 WARNING  temperatuurverschil is hoger dan 2!
+09:51:30 INFO     DHT11: 27.0 | DS18B20: 23.3125 | verschil: 3.6875
+09:51:30 WARNING  temperatuurverschil is hoger dan 2!
+09:51:32 INFO     DHT11: 27.0 | DS18B20: 23.1875 | verschil: 3.8125
+09:51:32 WARNING  temperatuurverschil is hoger dan 2!
+09:51:34 INFO     DHT11: 27.0 | DS18B20: 23.125 | verschil: 3.875
+09:51:34 WARNING  temperatuurverschil is hoger dan 2!
+09:51:36 INFO     DHT11: 27.0 | DS18B20: 23.0625 | verschil: 3.9375
+09:51:36 WARNING  temperatuurverschil is hoger dan 2!
+09:51:41 INFO     DHT11: 26.0 | DS18B20: 22.875 | verschil: 3.125
+09:51:41 WARNING  temperatuurverschil is hoger dan 2!
+09:51:43 INFO     DHT11: 26.0 | DS18B20: 22.8125 | verschil: 3.1875
+09:51:43 WARNING  temperatuurverschil is hoger dan 2!
+09:51:45 INFO     DHT11: 26.0 | DS18B20: 22.75 | verschil: 3.25
+09:51:45 WARNING  temperatuurverschil is hoger dan 2!
+09:51:48 INFO     DHT11: 26.0 | DS18B20: 22.6875 | verschil: 3.3125
+09:51:49 WARNING  temperatuurverschil is hoger dan 2!
+09:51:50 INFO     DHT11: 26.0 | DS18B20: 22.6875 | verschil: 3.3125
+09:51:50 WARNING  temperatuurverschil is hoger dan 2!
+09:51:52 INFO     DHT11: 26.0 | DS18B20: 22.625 | verschil: 3.375
+09:51:52 WARNING  temperatuurverschil is hoger dan 2!
+09:51:56 INFO     DHT11: 26.0 | DS18B20: 22.5625 | verschil: 3.4375
+09:51:56 WARNING  temperatuurverschil is hoger dan 2!
+09:51:58 INFO     DHT11: 26.0 | DS18B20: 22.5 | verschil: 3.5
+09:51:58 WARNING  temperatuurverschil is hoger dan 2!
+09:52:00 INFO     DHT11: 26.0 | DS18B20: 22.5 | verschil: 3.5
+09:52:00 WARNING  temperatuurverschil is hoger dan 2!
+09:52:02 INFO     DHT11: 26.0 | DS18B20: 22.4375 | verschil: 3.5625
+09:52:02 WARNING  temperatuurverschil is hoger dan 2!
+09:52:04 INFO     DHT11: 26.0 | DS18B20: 22.4375 | verschil: 3.5625
+09:52:04 WARNING  temperatuurverschil is hoger dan 2!
+09:52:06 INFO     DHT11: 26.0 | DS18B20: 22.375 | verschil: 3.625
+09:52:06 WARNING  temperatuurverschil is hoger dan 2!
+09:52:08 INFO     DHT11: 26.0 | DS18B20: 22.375 | verschil: 3.625
+09:52:08 WARNING  temperatuurverschil is hoger dan 2!
+09:52:10 INFO     DHT11: 25.0 | DS18B20: 22.375 | verschil: 2.625
+09:52:10 WARNING  temperatuurverschil is hoger dan 2!
+09:52:12 INFO     DHT11: 25.0 | DS18B20: 22.375 | verschil: 2.625
+09:52:12 WARNING  temperatuurverschil is hoger dan 2!
+09:52:14 INFO     DHT11: 25.0 | DS18B20: 22.375 | verschil: 2.625
+09:52:14 WARNING  temperatuurverschil is hoger dan 2!
+09:52:16 INFO     DHT11: 25.0 | DS18B20: 22.3125 | verschil: 2.6875
+09:52:16 WARNING  temperatuurverschil is hoger dan 2!
+09:52:18 INFO     DHT11: 25.0 | DS18B20: 22.3125 | verschil: 2.6875
+09:52:18 WARNING  temperatuurverschil is hoger dan 2!
+09:52:20 INFO     DHT11: 25.0 | DS18B20: 22.3125 | verschil: 2.6875
+09:52:20 WARNING  temperatuurverschil is hoger dan 2!
+09:52:22 INFO     DHT11: 25.0 | DS18B20: 22.25 | verschil: 2.75
+09:52:22 WARNING  temperatuurverschil is hoger dan 2!
+09:52:24 INFO     DHT11: 25.0 | DS18B20: 22.25 | verschil: 2.75
+09:52:24 WARNING  temperatuurverschil is hoger dan 2!
+09:52:26 INFO     DHT11: 25.0 | DS18B20: 22.25 | verschil: 2.75
+09:52:26 WARNING  temperatuurverschil is hoger dan 2!
+09:52:28 INFO     DHT11: 25.0 | DS18B20: 22.25 | verschil: 2.75
+09:52:28 WARNING  temperatuurverschil is hoger dan 2!
+09:52:30 INFO     DHT11: 25.0 | DS18B20: 22.25 | verschil: 2.75
+09:52:30 WARNING  temperatuurverschil is hoger dan 2!
+09:52:32 INFO     DHT11: 25.0 | DS18B20: 22.25 | verschil: 2.75
+09:52:32 WARNING  temperatuurverschil is hoger dan 2!
+09:52:34 INFO     DHT11: 25.0 | DS18B20: 22.25 | verschil: 2.75
+09:52:34 WARNING  temperatuurverschil is hoger dan 2!
+09:52:36 INFO     DHT11: 25.0 | DS18B20: 22.1875 | verschil: 2.8125
+09:52:36 WARNING  temperatuurverschil is hoger dan 2!
+09:52:38 INFO     DHT11: 25.0 | DS18B20: 22.1875 | verschil: 2.8125
+09:52:38 WARNING  temperatuurverschil is hoger dan 2!
+09:52:41 INFO     DHT11: 24.0 | DS18B20: 22.1875 | verschil: 1.8125
+09:52:43 INFO     DHT11: 24.0 | DS18B20: 22.1875 | verschil: 1.8125
+09:52:45 INFO     DHT11: 24.0 | DS18B20: 22.1875 | verschil: 1.8125
+09:52:47 INFO     DHT11: 24.0 | DS18B20: 22.125 | verschil: 1.875
+09:52:49 INFO     DHT11: 24.0 | DS18B20: 22.125 | verschil: 1.875
+09:52:51 INFO     DHT11: 24.0 | DS18B20: 22.125 | verschil: 1.875
+09:52:53 INFO     DHT11: 24.0 | DS18B20: 22.125 | verschil: 1.875
+09:52:56 INFO     DHT11: 24.0 | DS18B20: 22.125 | verschil: 1.875
+09:52:58 INFO     DHT11: 24.0 | DS18B20: 22.0625 | verschil: 1.9375
+09:53:00 INFO     DHT11: 24.0 | DS18B20: 22.0625 | verschil: 1.9375
+09:53:02 INFO     DHT11: 24.0 | DS18B20: 22.0625 | verschil: 1.9375
+09:53:04 INFO     DHT11: 24.0 | DS18B20: 22.0625 | verschil: 1.9375
+09:53:06 INFO     DHT11: 24.0 | DS18B20: 22.0625 | verschil: 1.9375
+09:53:10 INFO     DHT11: 24.0 | DS18B20: 22.0625 | verschil: 1.9375
+09:53:25 ERROR    DHT11 failed to read more than 10 times
+09:53:40 INFO     DHT11: 24.0 | DS18B20: 21.9375 | verschil: 2.0625
+09:53:40 WARNING  temperatuurverschil is hoger dan 2!
+09:53:42 INFO     DHT11: 23.0 | DS18B20: 21.9375 | verschil: 1.0625
+09:53:44 INFO     DHT11: 23.0 | DS18B20: 21.9375 | verschil: 1.0625
+09:53:46 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:53:48 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:53:50 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:53:53 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:53:55 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:53:59 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:54:01 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:54:04 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:54:07 INFO     DHT11: 23.0 | DS18B20: 21.875 | verschil: 1.125
+09:54:09 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:11 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:13 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:15 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:19 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:21 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:23 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:25 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:27 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:30 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:32 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:34 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:36 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:38 INFO     DHT11: 23.0 | DS18B20: 21.75 | verschil: 1.25
+09:54:41 INFO     DHT11: 23.0 | DS18B20: 21.8125 | verschil: 1.1875
+09:54:46 INFO     DHT11: 23.0 | DS18B20: 21.75 | verschil: 1.25
+09:54:48 INFO     DHT11: 23.0 | DS18B20: 21.75 | verschil: 1.25
