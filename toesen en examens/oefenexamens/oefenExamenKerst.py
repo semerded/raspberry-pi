@@ -27,26 +27,16 @@ logging.basicConfig(filename=LOGGING_FILE_LOCATION,
                     level=logging.INFO)
 coolRoomLogger = logging.getLogger()
 
+# start logger
 coolRoomLogger.info("cool room started at %s" %time.ctime())
 coolRoomLogger.info("-"*50)
 
 COOL_ROOM_DOOR_SENSOR = Button(9)
 
 THERMOMETER_LEDS = [LED(10),LED(11),LED(12),LED(13),LED(14),LED(15),]
-# THERMOMETER_LEDS_THRESHOLD = [-6,-3,0,3,6,9]
-THERMOMETER_LEDS_THRESHOLD = [18,20,22,24,26,28]
+THERMOMETER_LEDS_THRESHOLD = [-6,-3,0,3,6,9]
+# THERMOMETER_LEDS_THRESHOLD = [18,20,22,24,26,28] # uncomment this for test vars
 COOL_ROOM_DOOR_OPEN_INDICATOR_LED = LED(16)
-
-def checkIfDHTsensorsReadTemp(valueSensor1, ValueSensor2):
-    if valueSensor1 == None:
-        isValueSensor1NotNone = False
-    else:
-        isValueSensor1NotNone = True
-    if ValueSensor2 == None:
-        isValueSensor2NotNone = False
-    else:
-        isValueSensor2NotNone = True
-    return (isValueSensor1NotNone, isValueSensor2NotNone)
 
 class doorPosition(Enum):
     IsOpen = True
@@ -63,13 +53,29 @@ class ColdRoom:
         self.blinkTimeInSec = 1
         self.previousBlinkTime = 0
         self.coolRoomDoorIndicatorLed = False
+        
+    def checkIfDHTsensorsReadTemp(valueSensor1, ValueSensor2):
+        if valueSensor1 == None:
+            isValueSensor1NotNone = False
+        else:
+            isValueSensor1NotNone = True
+        if ValueSensor2 == None:
+            isValueSensor2NotNone = False
+        else:
+            isValueSensor2NotNone = True
+        return (isValueSensor1NotNone, isValueSensor2NotNone)
+
 
 
     def measureTemperatureInColdRoom(self): # running in different thread
         while True:
+            # read DHT11 sensors
             unused_humidity, DHTtemperature_sensor1 = Adafruit_DHT.read(Adafruit_DHT.DHT11, 4)
             unused_humidity, DHTtemperature_sensor2 = Adafruit_DHT.read(Adafruit_DHT.DHT11, 5)
-            resultOfValidationCheck = checkIfDHTsensorsReadTemp(DHTtemperature_sensor1, DHTtemperature_sensor2)
+            
+            # check if both sensors read a temperature and not none
+            resultOfValidationCheck = self.checkIfDHTsensorsReadTemp(DHTtemperature_sensor1, DHTtemperature_sensor2)
+            
             if resultOfValidationCheck[0] and resultOfValidationCheck[1]:
                 self.invalidReadingInArow = 0
                 self.averageTemperature = (DHTtemperature_sensor1 + DHTtemperature_sensor2) / 2
@@ -78,9 +84,9 @@ class ColdRoom:
                     self.previouseAverageTemperature = self.averageTemperature
                 time.sleep(2)
                 
-            else:
+            else: # if a sensor reads 0: retry until it reads a temp
                 self.invalidReadingInArow += 1
-                if self.invalidReadingInArow >= 5:
+                if self.invalidReadingInArow >= 5: # if the sensor fails to read 5 or more times: give an error log message
                     coolRoomLogger.warning(f"unable to update thermometer because a sensor reads None (valid Temp: sensor 1: {resultOfValidationCheck[0]} | sensor 2: {resultOfValidationCheck[1]})")
     
     def updateThermometer(self): 
@@ -92,6 +98,7 @@ class ColdRoom:
                     THERMOMETER_LEDS[ledNumber].off()
                     
     def logDoorStatus(self, doorPosition: doorPosition):
+        # only log when door positon is changed
         doorPosition = doorPosition.value
         if doorPosition != self.loggedAtstatus:
             logDoorValue = "opened" if doorPosition else "closed"
@@ -107,7 +114,8 @@ class ColdRoom:
             self.logDoorStatus(doorPosition.IsOpen)
 
         
-    def doorWaringLight(self): 
+    def blinkDoorWaringLight(self): 
+        # an implementation of the blink function
         currentTime = time.time()
         if currentTime - self.previousBlinkTime > self.blinkTimeInSec:
             self.coolRoomDoorIndicatorLed = not self.coolRoomDoorIndicatorLed
@@ -121,19 +129,21 @@ class ColdRoom:
     def getDoorPosition(self):
         return self.doorPosition.value
                       
-COLDROOM = ColdRoom()
+COLDROOM = ColdRoom() # TODO add parameters to class init to make it reusable for multiple coldrooms
                 
-def main():
+def main(): # function for main thread
     while True:
-        # currentTime = time.time()
         COLDROOM.updateThermometer()
+        
         COLDROOM.checkDoor()
         if COLDROOM.getDoorPosition:
-            COLDROOM.doorWaringLight()
-        else: COOL_ROOM_DOOR_OPEN_INDICATOR_LED.off()
+            COLDROOM.blinkDoorWaringLight()
+        else: 
+            COOL_ROOM_DOOR_OPEN_INDICATOR_LED.off()
 
-temperatureMeasurementThread = threading.Thread(target=COLDROOM.measureTemperatureInColdRoom, args=())
-mainThread = threading.Thread(target=main, args=())
+temperatureMeasurementThread = threading.Thread(target=COLDROOM.measureTemperatureInColdRoom, args=()) # temperature reading thread
+mainThread = threading.Thread(target=main, args=()) # main thread
 
+# start the threads
 temperatureMeasurementThread.start()
 mainThread.start()
