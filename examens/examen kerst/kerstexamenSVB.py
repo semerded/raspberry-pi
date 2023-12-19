@@ -1,4 +1,4 @@
-import time, logging
+import time, logging, threading
 from gpiozero import LED, DistanceSensor
 from enum import Enum # TODO
 
@@ -16,7 +16,7 @@ DISTANCE_DETECTOR_LEDS = [LED(10), LED(11), LED(12), LED(13), LED(14), LED(15)] 
 DISTANCE_SENSORS = [DistanceSensor(21,22), DistanceSensor(23,24)]
 ERROR_LED = LED(16)
 COLLISSION_ALARM = LED(17)
-DISTANCE_SENSORS_LEDS_THRESHOLD = [60, 50, 40, 30, 20, 10, 5]
+DISTANCE_SENSORS_LEDS_THRESHOLD = [0.60, 0.50, 0.40, 0.30, 0.20, 0.10]
 
 
 previousTime = 0
@@ -38,50 +38,59 @@ class DistanceDetector:
         self.distanceSensorsLeds = distanceSensorLeds
         self.errorLed = errorLed
         self.collissionAlarm = collissionAlarm
-        self._currentTime = time.time()
-        self.previousBlinkTime = self._currentTime
-        self.previousErrorLedBlinkTime = self._currentTime
+        self.currentTime = time.time()
+        self.previousBlinkTime = self.currentTime
+        self.previousErrorLedBlinkTime = self.currentTime
         self.distanceSensorsReadings = [-1, -1]
         self.distanceSensorsLedsThreshold = distanceSensorsLedsThreshold
         self.distanceSensorsLedsBlinkStatus = False
         self.errorLedBlinkStatus = False
+        self.averageSensorReading = -1
         
-    def currentTime(self, currentTime):
-        self._currentTime = currentTime
+    def main(self):
+        while True:
+            self.currentTime = time.time()
+            self.compareSensorResult()
+        
+  
     
     def readSensors(self):
-        for index, distanceSensor in enumerate(self.distanceSensors):
-            self.distanceSensorsReadings[index] = distanceSensor.distance
-        self.compareSensorResult()
+        while True:
+            for index, distanceSensor in enumerate(self.distanceSensors):
+                self.distanceSensorsReadings[index] = distanceSensor.distance
+            self.averageSensorReading = self.calculateAverageSensorValue()
     
     def compareSensorResult(self):
-        if abs(self.distanceSensorsReadings[0] - self.distanceSensorsReadings[1]) >= 5:
+        if abs(self.distanceSensorsReadings[0] - self.distanceSensorsReadings[1]) >= 0.05:
             self.blinkErrorLed()
-        self.averageSensorReading = self.calculateAverageSensorValue()
-        self.updateDistanceLedStatus()
+        else:
+            self.updateDistanceLedStatus()
           
     def calculateAverageSensorValue(self):
         return sum(self.distanceSensorsReadings) / len(self.distanceSensorsReadings)
         
     def blinkErrorLed(self):
-        if self._currentTime - self.previousErrorLedBlinkTime > 0.1:
+        self.ledsShowCloseReading()
+        if self.currentTime - self.previousErrorLedBlinkTime > 0.1:
             blink(self.errorLed, self.errorLedBlinkStatus)
             self.errorLedBlinkStatus = not self.errorLedBlinkStatus
-            self.previousErrorLedBlinkTime = self._currentTime
+            self.previousErrorLedBlinkTime = self.currentTime
             
     def updateDistanceLedStatus(self):
         if not self.isCloserThan5cm():
             for index, threshold in enumerate(self.distanceSensorsLedsThreshold):
                 if threshold < self.averageSensorReading:
                     blink(self.distanceSensorsLeds[index], self.distanceSensorsLedsBlinkStatus)
-            if self._currentTime - self.previousBlinkTime > 0.5:
+                else:
+                    self.distanceSensorsLeds[index].off()
+            if self.currentTime - self.previousBlinkTime > 0.5:
                 self.distanceSensorsLedsBlinkStatus = not self.distanceSensorsLedsBlinkStatus
-                self.previousBlinkTime = self._currentTime
+                self.previousBlinkTime = self.currentTime
         else:
             self.ledsShowCloseReading()
             
     def isCloserThan5cm(self):
-        if self.averageSensorReading < 5:
+        if self.averageSensorReading < 0.05:
             return True
         return False
             
@@ -90,11 +99,14 @@ class DistanceDetector:
             led.on()
 
     
-SAFE_CAR = DistanceDetector(DISTANCE_SENSORS, DISTANCE_DETECTOR_LEDS, ERROR_LED, COLLISSION_ALARM)  
+SAFE_CAR = DistanceDetector(DISTANCE_SENSORS, DISTANCE_DETECTOR_LEDS, DISTANCE_SENSORS_LEDS_THRESHOLD, ERROR_LED, COLLISSION_ALARM)  
     
     
-while True:
-    SAFE_CAR.readSensors()
+mainThread = threading.Thread(target=SAFE_CAR.main,args=())
+distanceSensorThread = threading.Thread(target=SAFE_CAR.readSensors,args=())
+
+mainThread.start()
+distanceSensorThread.start()
     
     
     
