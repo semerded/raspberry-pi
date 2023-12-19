@@ -38,12 +38,16 @@ class DistanceDetector:
         self.distanceSensorsLeds = distanceSensorLeds
         self.errorLed = errorLed
         self.collissionAlarm = collissionAlarm
-        self.previousBlinkTime = time.time()
-        self.previousErrorLedBlinkTime = time.time()
+        self._currentTime = time.time()
+        self.previousBlinkTime = self._currentTime
+        self.previousErrorLedBlinkTime = self._currentTime
         self.distanceSensorsReadings = [-1, -1]
         self.distanceSensorsLedsThreshold = distanceSensorsLedsThreshold
         self.distanceSensorsLedsBlinkStatus = False
         self.errorLedBlinkStatus = False
+        
+    def currentTime(self, currentTime):
+        self._currentTime = currentTime
     
     def readSensors(self):
         for index, distanceSensor in enumerate(self.distanceSensors):
@@ -60,16 +64,19 @@ class DistanceDetector:
         return sum(self.distanceSensorsReadings) / len(self.distanceSensorsReadings)
         
     def blinkErrorLed(self):
-        if time.time() - self.previousErrorLedBlinkTime > 0.1:
+        if self._currentTime - self.previousErrorLedBlinkTime > 0.1:
             blink(self.errorLed, self.errorLedBlinkStatus)
-            self.errorLedBlinkStatus = not self.errorLedBlinkStatus   
+            self.errorLedBlinkStatus = not self.errorLedBlinkStatus
+            self.previousErrorLedBlinkTime = self._currentTime
             
     def updateDistanceLedStatus(self):
         if not self.isCloserThan5cm():
             for index, threshold in enumerate(self.distanceSensorsLedsThreshold):
                 if threshold < self.averageSensorReading:
                     blink(self.distanceSensorsLeds[index], self.distanceSensorsLedsBlinkStatus)
-            self.distanceSensorsLedsBlinkStatus = not self.distanceSensorsLedsBlinkStatus
+            if self._currentTime - self.previousBlinkTime > 0.5:
+                self.distanceSensorsLedsBlinkStatus = not self.distanceSensorsLedsBlinkStatus
+                self.previousBlinkTime = self._currentTime
         else:
             self.ledsShowCloseReading()
             
