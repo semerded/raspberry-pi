@@ -1,13 +1,10 @@
 import time, logging, threading
 from gpiozero import LED, DistanceSensor
-from enum import Enum # TODO
 
-LOGGING_FILE_LOCATION = "coolRoom.log"
-
+LOGGING_FILE_LOCATION = "safe_car.log"
 
 logging.basicConfig(filename=LOGGING_FILE_LOCATION,
                     format='%(asctime)s %(levelname)-8s %(message)s',
-                    datefmt='%H:%M:%S',
                     filemode='w',
                     level=logging.INFO)
 safetyCarLogger = logging.getLogger()
@@ -18,14 +15,9 @@ ERROR_LED = LED(16)
 COLLISSION_ALARM = LED(17)
 DISTANCE_SENSORS_LEDS_THRESHOLD = [0.60, 0.50, 0.40, 0.30, 0.20, 0.10]
 
+safetyCarLogger.info("welcome to the safety car")
+safetyCarLogger.info("the distance and errors will be shown here")
 
-previousTime = 0
-waitTime = 1
-if time.time() - previousTime >= waitTime:
-    ...
-
-# class ...(Enum):
-#     ...
 def blink(led: LED, blinkStatus: bool):
         if blinkStatus:
             led.on()
@@ -46,14 +38,13 @@ class DistanceDetector:
         self.distanceSensorsLedsBlinkStatus = False
         self.errorLedBlinkStatus = False
         self.averageSensorReading = -1
+        self.previousDistance = -1
         
     def main(self):
         while True:
             self.currentTime = time.time()
             self.compareSensorResult()
         
-  
-    
     def readSensors(self):
         while True:
             for index, distanceSensor in enumerate(self.distanceSensors):
@@ -77,6 +68,8 @@ class DistanceDetector:
             self.previousErrorLedBlinkTime = self.currentTime
             
     def updateDistanceLedStatus(self):
+        self.checkCollision()
+        self.logDistance()            
         if not self.isCloserThan5cm():
             for index, threshold in enumerate(self.distanceSensorsLedsThreshold):
                 if threshold < self.averageSensorReading:
@@ -89,25 +82,31 @@ class DistanceDetector:
         else:
             self.ledsShowCloseReading()
             
+    def logDistance(self):
+        if self.previousDistance != round(self.averageSensorReading, 2):
+            safetyCarLogger.info("distance changed to %s" %self.averageSensorReading)
+            self.previousDistance = self.averageSensorReading
+            
     def isCloserThan5cm(self):
         if self.averageSensorReading < 0.05:
             return True
         return False
             
-    def ledsShowCloseReading(self): # TODO change name
+    def ledsShowCloseReading(self):
         for led in self.distanceSensorsLeds:
             led.on()
+            
+    def checkCollision(self):
+        if self.previousDistance > 0.3 and self.averageSensorReading == 0:
+            COLLISSION_ALARM.on()
+        else:
+            COLLISSION_ALARM.off()
 
     
 SAFE_CAR = DistanceDetector(DISTANCE_SENSORS, DISTANCE_DETECTOR_LEDS, DISTANCE_SENSORS_LEDS_THRESHOLD, ERROR_LED, COLLISSION_ALARM)  
-    
-    
+       
 mainThread = threading.Thread(target=SAFE_CAR.main,args=())
 distanceSensorThread = threading.Thread(target=SAFE_CAR.readSensors,args=())
 
 mainThread.start()
 distanceSensorThread.start()
-    
-    
-    
-
