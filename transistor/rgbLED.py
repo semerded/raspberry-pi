@@ -4,7 +4,7 @@ from enum import Enum
 class colorStatus(Enum):
     static = 0
     ascend = 1
-    descend = 1
+    descend = 2
     
 class outOf8bitRange(Exception): ...
 
@@ -28,14 +28,14 @@ class RGB_LED:
             self.pinListing[pin].start(0)
             
     def colorCycle(self):
-        self.checkValues()
         self._updateColorCycleValues()
+        self.checkValues()
         self.updateLEDs()
        
                 
     def checkValues(self):
         for index, colorValue in enumerate(self.colorValue):
-            if colorValue >= 255:
+            if colorValue >= 100:
                 self.colorValueStatus[index] = colorStatus.descend
                 self._updateNextIndex(index, colorStatus.ascend)
             
@@ -54,7 +54,7 @@ class RGB_LED:
         for index, status in enumerate(self.colorValueStatus):
             if status == colorStatus.ascend:
                 self.colorValue[index] += 1
-                
+                                
             if status == colorStatus.descend:
                 self.colorValue[index] -= 1
                 
@@ -79,8 +79,8 @@ class RGB_LED:
         
 
 
-rgb_LED = RGB_LED(12, 13, 14)
+rgb_LED = RGB_LED(12, 13, 18)
 
 while True:
     rgb_LED.colorCycle()
-    time.sleep(0.1)
+    time.sleep(0.03)
