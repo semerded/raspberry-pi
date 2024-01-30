@@ -1,11 +1,11 @@
-import spidev, time, logging, RPI.GPIO as IO
+import spidev, time, logging, RPi.GPIO as IO
 
 
 class ADCreader:
     def __init__(self) -> None:
-        self.spi = spidev.Spidev()
+        self.spi = spidev.SpiDev()
         self.spi.open(0, 0)
-        self.max_speed_hz = 1000000
+        self.spi.max_speed_hz = 1000000
     
     def readADC(self, channel: int):
         adc = self.spi.xfer2([1, (8 + channel) << 4,0])
@@ -22,10 +22,11 @@ class PWM:
     def _IOsetup(self, PWMpins):
         for pin in PWMpins:
             IO.setup(pin, IO.OUT)
-            self.pinListing[pin] = IO.PWM(pin, 255)
+            self.pinListing[pin] = IO.PWM(pin, 100)
             self.pinListing[pin].start(0)
             
     def setPWMvalue(self, pin: int, value: int):
+        if value >= 0 and value <= 100:
           self.pinListing[pin].ChangeDutyCycle(value)
   
         
@@ -35,6 +36,7 @@ class Motor(PWM):
         super().__init__(motorPin)
         
     def setSpeed(self, speed: int):
+        print(speed)
         self.setPWMvalue(self.pin, speed)
         
         
@@ -48,18 +50,18 @@ class TemperatureReactiveMotor(Motor):
         
     def activate(self):
         adcValue = self.adcReader.readADC(self.adcChannel)
-        self._mapTempToSpeed(adcValue)
-        self.setSpeed(adcValue)
+        self.setSpeed(self._mapTempToSpeed(adcValue))   
+  
+    def _mapTempToSpeed(self, adcValue):
+        temperature = (((self.adcReader.readADC(self.adcChannel) * 3.3) / 1024) - 0.5) * 100
+        return self.overwriteMotorSpeed(temperature)
         
-    def _mapTempToSpeed(self, tempValue):
-        pass
+    def overwriteMotorSpeed(self, speed):
+        return (speed - self.minTemp) / (self.maxTemp - self.minTemp) * 100     
 
 
-# temperatureReactiveMotor = TemperatureReactiveMotor(12, 0, 10, 30)
-reader = ADCreader()
-
+temperatureReactiveMotor = TemperatureReactiveMotor(12, 0, 10, 30)
 
 while True:
-    reader.readADC(0)
-    # temperatureReactiveMotor.activate()
+    temperatureReactiveMotor.activate()
     
