@@ -1,5 +1,4 @@
-import spidev, time, logging, RPi.GPIO as IO
-
+import spidev, RPi.GPIO as IO
 
 class ADCreader:
     def __init__(self) -> None:
@@ -53,7 +52,7 @@ class TemperatureReactiveMotor(Motor):
         self.setSpeed(self._mapTempToSpeed(adcValue))   
   
     def _mapTempToSpeed(self, adcValue):
-        temperature = (((self.adcReader.readADC(self.adcChannel) * 3.3) / 1024) - 0.5) * 100
+        temperature = (((adcValue * 3.3) / 1024) - 0.5) * 100
         return self.overwriteMotorSpeed(temperature)
         
     def overwriteMotorSpeed(self, speed):
