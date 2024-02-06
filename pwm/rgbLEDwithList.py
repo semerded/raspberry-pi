@@ -44,12 +44,13 @@ class RGB_LED:
             self.pinListing[pin] = IO.PWM(pin, 100)
             self.pinListing[pin].start(0)
             
-    def setList(self, RGBlist: list[list | tuple]):
+    def setList(self, RGBlist: list[tuple]):
         self.RGBlist = RGBlist
             
     def colorListCycle(self):
         self._checkListIndexOverflow()
         self.updateLEDs()
+        self.listIndex += 1
             
     def _checkListIndexOverflow(self):
         if (listLenght := len(self.RGBlist)) != 0 and self.listIndex == listLenght -1:
@@ -58,11 +59,11 @@ class RGB_LED:
     def updateLEDs(self):
         currentColor = self.RGBlist[self.listIndex]
         for index, pwm in enumerate(self.pinListing.values()):
-            pwm.ChangeDutyCycle(currentColor[self.listIndex][index])
+            pwm.ChangeDutyCycle(currentColor[index] / 2.55)
 
 rgb_LED = RGB_LED(12, 13, 18)
 rgb_LED.setList(RGB_LIST)
 
 while True:
     rgb_LED.colorListCycle()
-    time.sleep(0.05)
+    time.sleep(0.2)
