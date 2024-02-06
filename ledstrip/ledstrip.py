@@ -1,23 +1,23 @@
-from rpi_ws281x import *
+from board, neopixel
 from time import sleep
 
 LED_COUNT = 95
-LED_PIN = 18
-LED_FREQ_HZ = 800000
-LED_INVERT = False
-LED_DMA = 10
-LED_BRIGHTNESS = 65
-LED_CHANNEL = 0
-ledStrip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+# LED_PIN = 18
+# LED_FREQ_HZ = 800000
+# LED_INVERT = False
+# LED_DMA = 10
+# LED_BRIGHTNESS = 65
+# LED_CHANNEL = 0
+ledStrip = neopixel.Neopixel(board.D18, LED_COUNT)
 
 class LedStripControl:
-    def __init__(self, ledStrip: Adafruit_NeoPixel) -> None:
+    def __init__(self, ledStrip: neopixel.Neopixel, ledCount: int) -> None:
         self.strip = ledStrip
+        self.ledCount = ledCount
         
         
     def setColor(self, color):
-        for index in range(self.strip.numPixels()):
-            self.strip.setPixelColor(index, Color(*color))
+        self.strip.fill(color)
         self.strip.show()
         
     def clear(self):
@@ -25,20 +25,20 @@ class LedStripControl:
 
     def colorSnake(self, color, snakeLength: int, timeInMsec: int):
         for index in range(self.strip.numPixels()):
-            self.strip.setPixelColor(index, Color(*color))
+            self.strip[index] = color
             
             if index > snakeLength:
-                self.strip.setPixelColor(index - snakeLength, Color(*0, 0, 0))
-                
+                self.strip[index - snakeLength] = (0, 0, 0)
+                        
             self.strip.show()
-            sleep(timeInMsec / self.strip.numPixels())
+            sleep(timeInMsec / self.ledCount)
             
         
     def colorLineProgress(self, color, timeInMsec: int):
         for index in range(self.strip.numPixels()):
-            self.strip.setPixelColor(index, Color(*color))
+            self.strip[index] = color
             self.strip.show()
-            sleep(timeInMsec / self.strip.numPixels())
+            sleep(timeInMsec / self.ledCount)
         
         
     def colorCycle(self):
