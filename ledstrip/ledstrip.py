@@ -1,4 +1,4 @@
-import board, pixelfix
+import board, neopixel
 from time import sleep
 
 LED_COUNT = 95
@@ -8,10 +8,11 @@ LED_COUNT = 95
 # LED_DMA = 10
 # LED_BRIGHTNESS = 65
 # LED_CHANNEL = 0
-ledStrip = pixelfix.neopixel.Neopixel(board.D18, LED_COUNT)
+ledStrip = neopixel.NeoPixel(board.D18, LED_COUNT)
+
 
 class LedStripControl:
-    def __init__(self, ledStrip: pixelfix.neopixel.Neopixel, ledCount: int) -> None:
+    def __init__(self, ledStrip: neopixel.NeoPixel, ledCount: int) -> None:
         self.strip = ledStrip
         self.ledCount = ledCount
         
@@ -24,39 +25,44 @@ class LedStripControl:
         self.setColor((0, 0, 0))
 
     def colorSnake(self, color, snakeLength: int, timeInMsec: int):
-        for index in range(self.strip.numPixels()):
+        for index in range(self.ledCount):
             self.strip[index] = color
             
             if index > snakeLength:
                 self.strip[index - snakeLength] = (0, 0, 0)
                         
             self.strip.show()
-            sleep(timeInMsec / self.ledCount)
+            sleep((timeInMsec / self.ledCount) / 1000)
             
         
     def colorLineProgress(self, color, timeInMsec: int):
-        for index in range(self.strip.numPixels()):
+        for index in range(self.ledCount):
             self.strip[index] = color
             self.strip.show()
-            sleep(timeInMsec / self.ledCount)
+            sleep((timeInMsec / self.ledCount) / 1000)
         
         
     def colorCycle(self):
         pass
     
-RGBstrip = LedStripControl(ledStrip)
+RGBstrip = LedStripControl(ledStrip, LED_COUNT)
 
 while True:
-    RGBstrip.setColor((255, 0, 0))
-    sleep(1)
-    RGBstrip.setColor((0, 255, 0))
-    sleep(1)
-    RGBstrip.setColor((0, 0, 255))
-    sleep(1)
-    RGBstrip.colorSnake((0, 255, 0), 5, 2000)
-    RGBstrip.colorLineProgress((255, 255, 0), 2000)
-    sleep(1)
-    RGBstrip.clear()
-    sleep(1)
+    try:
+        RGBstrip.setColor((255, 0, 0))
+        sleep(1)
+        RGBstrip.setColor((0, 255, 0))
+        sleep(1)
+        RGBstrip.setColor((0, 0, 255))
+        sleep(1)
+
+        RGBstrip.colorSnake((0, 255, 0), 5, 2000)
+        RGBstrip.colorLineProgress((255, 255, 0), 2000)
+        sleep(1)
+        RGBstrip.clear()
+        sleep(1)
+    except KeyboardInterrupt:
+        RGBstrip.clear()
+        break
     
 
