@@ -50,7 +50,7 @@ class TemperatureReactiveMotor(Motor):
     def activate(self):
         adcValue = self.adcReader.readADC(self.adcChannel)
         self.setSpeed(self._mapTempToSpeed(adcValue))   
-  
+
     def _mapTempToSpeed(self, adcValue):
         temperature = (((adcValue * 3.3) / 1024) - 0.5) * 100
         return self.overwriteMotorSpeed(temperature)
