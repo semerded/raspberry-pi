@@ -1,4 +1,4 @@
-import board, neopixel
+import board, pixelfix
 from time import sleep
 
 LED_COUNT = 95
@@ -8,11 +8,11 @@ LED_COUNT = 95
 # LED_DMA = 10
 # LED_BRIGHTNESS = 65
 # LED_CHANNEL = 0
-ledStrip = neopixel.NeoPixel(board.D18, LED_COUNT)
+ledStrip = pixelfix.NeoPixel(board.D18, LED_COUNT)
 
 
 class LedStripControl:
-    def __init__(self, ledStrip: neopixel.NeoPixel, ledCount: int) -> None:
+    def __init__(self, ledStrip: pixelfix.NeoPixel, ledCount: int) -> None:
         self.strip = ledStrip
         self.ledCount = ledCount
         
