@@ -57,9 +57,9 @@ class StepperMotor:
             self.stepperMotor.motor_run(self.GPIO_PINS, steps=1, ccwise=direction, wait=self.speed, initdelay=0)
             self.stepsDone += 1
             if not self.isActive():
-                return
+                return False
         self.active = False
-        return
+        return True
             # self.remainingSteps TODO add remaining steps
         
     def stop(self):
@@ -94,10 +94,11 @@ class StepperMotorInputControl(StepperMotor):
                 
     def activate(self, distance: float, direction: stepperDirection):
         while True:
-            if not self.isActive() and self.stopButton.is_active:
+            if not self.isActive() and self.stopButton.is_active: # knop blijft geactiveerd uit vorige script
                 return
             if self.startButton.is_active:
-                self.rotateByDistance(distance, direction)
+                if self.rotateByDistance(distance, direction):
+                    return 
                 
             
 
@@ -123,7 +124,7 @@ potmeter = StepperMotorSpeedControl(0)
     
 
 stepperMotor = RpiMotorLib.BYJMotor("stepperMotor")
-stepperMotorController = StepperMotorInputControl(stepperMotor, stopButton, potmeter)
+stepperMotorController = StepperMotorInputControl(stepperMotor, startButton, stopButton, potmeter)
 stepperMotorController.setDistancePerRevolution(6)
 
 def resetVariables():
