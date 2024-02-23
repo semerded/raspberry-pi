@@ -10,6 +10,7 @@ class stepperDirection(Enum):
     right = False
 
 #* classes
+# potmeter
 class ADCreader:
     def __init__(self) -> None:
         self.spi = spidev.SpiDev()
@@ -20,6 +21,7 @@ class ADCreader:
         adc = self.spi.xfer2([1, (8 + channel) << 4,0])
         return ((adc[1] & 3) <<8) + adc[2]
 
+
 class StepperMotorSpeedControl(ADCreader):
     def __init__(self, potmeterChannel: int) -> None:
         super().__init__()
@@ -28,20 +30,22 @@ class StepperMotorSpeedControl(ADCreader):
     def readValues(self):
         return self.readADC(self.potmeterChannel)
     
+    
+    
+#stepper motor
 class StepperMotor:
     def __init__(self, stepperMotor: RpiMotorLib.BYJMotor) -> None:
         self.stepperMotor = stepperMotor
         self.GPIO_PINS = [18, 23, 24, 25]
         self.REVOLUTION_STEP_NUMBER = 512
         self.active = False
-        self.remainingSteps: int
+        self.stepsDone = 0
         self.speed = 0.001
 
 
 
     def rotateBySteps(self, steps: int, direction: stepperDirection):
         self.active = True
-        self.remainingSteps = steps
         if isinstance(direction, stepperDirection):
             self._rotateMotorBySteps(steps, direction.value)
         else:
@@ -51,6 +55,7 @@ class StepperMotor:
     def _rotateMotorBySteps(self, steps: int, direction):
         for step in range(steps):
             self.stepperMotor.motor_run(self.GPIO_PINS, steps=1, ccwise=direction, wait=self.speed, initdelay=0)
+            self.stepsDone += 1
             if not self.isActive():
                 return
         self.active = False
@@ -62,20 +67,23 @@ class StepperMotor:
         
     def isActive(self):
         return self.active
+    
         
 class StepperMotorInputControl(StepperMotor):
-    def __init__(self, stepperMotor: RpiMotorLib.BYJMotor, stopButton: Button, potmeter: StepperMotorSpeedControl) -> None:
+    def __init__(self, stepperMotor: RpiMotorLib.BYJMotor, startButton: Button, stopButton: Button, potmeter: StepperMotorSpeedControl) -> None:
         super().__init__(stepperMotor)
         self.potmeter = potmeter
+        self.startButton = startButton
         self.stopButton = stopButton
-        self.distancePerRevolution = 1 # mm 
+        self.distancePerRevolution = 1 # mm
         
     def setDistancePerRevolution(self, distancePerRevolution: float):
         self.distancePerRevolution = distancePerRevolution
         
     def rotateByDistance(self, distance: float, direction: stepperDirection):
         self.active = True
-        distance = int((self.REVOLUTION_STEP_NUMBER / self.distancePerRevolution) * distance)
+        distance = int((self.REVOLUTION_STEP_NUMBER / self.distancePerRevolution) * distance) - self.stepsDone
+        self.stepsDone = 0
         Thread(target=self.rotateBySteps, args=(distance, direction)).start()
         while self.active:
             self.speed = 0.001 + self.potmeter.readValues() / 50000
@@ -83,6 +91,15 @@ class StepperMotorInputControl(StepperMotor):
             if stopButton.is_active:
                 print(False)
                 self.active = False
+                
+    def activate(self, distance: float, direction: stepperDirection):
+        while True:
+            if not self.isActive() and self.stopButton.is_active:
+                return
+            if self.startButton.is_active:
+                self.rotateByDistance(distance, direction)
+                
+            
 
     
     
@@ -112,18 +129,11 @@ stepperMotorController.setDistancePerRevolution(6)
 def resetVariables():
     global reverseMotor
     reverseMotor = False
-resetVariables()
-distance = intput("geef de afstand in milimeter op (negatief om terug te draaien): ")   
-
-
+    
 while True:
-    
-    
+    resetVariables()
+    distance = intput("geef de afstand in milimeter op (negatief om terug te draaien): ")
     if distance < 0:
         reverseMotor = True
-    
-    if startButton.is_active:
-        stepperMotorController.rotateByDistance(distance, reverseMotor)
-        
-    
-        
+
+    stepperMotorController.activate(distance, reverseMotor)
