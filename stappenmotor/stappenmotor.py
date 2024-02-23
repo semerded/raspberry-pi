@@ -26,15 +26,17 @@ class StepperMotorSpeedControl(ADCreader):
         self.potmeterChannel = potmeterChannel
     
     def readValues(self):
-        adcSignal = self.readADC(self.potmeterChannel)
+        return self.readADC(self.potmeterChannel)
     
 class StepperMotor:
     def __init__(self, stepperMotor: RpiMotorLib.BYJMotor) -> None:
         self.stepperMotor = stepperMotor
         self.GPIO_PINS = [18, 23, 24, 25]
-        self.REVOLUTION_STEP_NUMBER = 2048
+        self.REVOLUTION_STEP_NUMBER = 512
         self.active = False
         self.remainingSteps: int
+        self.speed = 0.001
+
 
 
     def rotateBySteps(self, steps: int, direction: stepperDirection):
@@ -45,11 +47,14 @@ class StepperMotor:
         else:
             self._rotateMotorBySteps(steps, direction)     
 
-        self.active = False
     
     def _rotateMotorBySteps(self, steps: int, direction):
-        for step in range(self.remainingSteps):
-            self.stepperMotor.motor_run(self.GPIO_PINS, steps=1, ccwise=direction, steptype="full")
+        for step in range(steps):
+            self.stepperMotor.motor_run(self.GPIO_PINS, steps=1, ccwise=direction, wait=self.speed, initdelay=0)
+            if not self.isActive():
+                return
+        self.active = False
+        return
             # self.remainingSteps TODO add remaining steps
         
     def stop(self):
@@ -64,17 +69,19 @@ class StepperMotorInputControl(StepperMotor):
         self.potmeter = potmeter
         self.stopButton = stopButton
         self.distancePerRevolution = 1 # mm 
-        self.speed = 0.001
         
     def setDistancePerRevolution(self, distancePerRevolution: float):
         self.distancePerRevolution = distancePerRevolution
         
     def rotateByDistance(self, distance: float, direction: stepperDirection):
+        self.active = True
         distance = int((self.REVOLUTION_STEP_NUMBER / self.distancePerRevolution) * distance)
-        Thread(target=self.rotateBySteps, args=(distance, direction))
+        Thread(target=self.rotateBySteps, args=(distance, direction)).start()
         while self.active:
-            self.speed = self.potmeter.readValues() / 10000
+            self.speed = 0.001 + self.potmeter.readValues() / 50000
+            print(self.speed)
             if stopButton.is_active:
+                print(False)
                 self.active = False
 
     
@@ -95,22 +102,22 @@ def intput(message: object = "", wrongInputMessage: str = "Input must be an int 
     
 startButton = Button(5)
 stopButton = Button(6)
-potmeter = StepperMotorSpeedControl()
+potmeter = StepperMotorSpeedControl(0)
     
 
 stepperMotor = RpiMotorLib.BYJMotor("stepperMotor")
-stepperMotorController = StepperMotorInputControl(stepperMotor, startButton, stopButton)
+stepperMotorController = StepperMotorInputControl(stepperMotor, stopButton, potmeter)
 stepperMotorController.setDistancePerRevolution(6)
 
 def resetVariables():
     global reverseMotor
     reverseMotor = False
-    
+resetVariables()
+distance = intput("geef de afstand in milimeter op (negatief om terug te draaien): ")   
 
 
 while True:
-    resetVariables()
-    distance = intput("geef de afstand in milimeter op (negatief om terug te draaien): ")
+    
     
     if distance < 0:
         reverseMotor = True
@@ -120,9 +127,3 @@ while True:
         
     
         
-
-
-
-
-
-    
