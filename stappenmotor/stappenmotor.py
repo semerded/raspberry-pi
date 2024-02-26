@@ -10,6 +10,25 @@ class stepperDirection(Enum):
     right = False
 
 #* classes
+# button
+class RpiButton(Button):
+    """
+    remake om de `isClicked` functie toe te voegen
+    """
+    def __init__(self, pin=None, pull_up=True, active_state=None, bounce_time=None, hold_time=1, hold_repeat=False, pin_factory=None):
+        super().__init__(pin, pull_up, active_state, bounce_time, hold_time, hold_repeat, pin_factory)
+        self.alreadyClicked = False
+        
+    def isClicked(self):
+        if self.is_active:
+            if not self.alreadyClicked:
+                self.alreadyClicked = True
+                return True
+        else:
+            self.alreadyClicked = False
+        return False
+        
+
 # potmeter
 class ADCreader:
     def __init__(self) -> None:
@@ -28,7 +47,7 @@ class StepperMotorSpeedControl(ADCreader):
         self.potmeterChannel = potmeterChannel
     
     def readValues(self):
-        return self.readADC(self.potmeterChannel)
+        return 0.001 + self.readADC(self.potmeterChannel) / 50000
     
     
     
@@ -52,7 +71,7 @@ class StepperMotor:
             self._rotateMotorBySteps(steps, direction)     
 
     
-    def _rotateMotorBySteps(self, steps: int, direction):
+    def _rotateMotorBySteps(self, steps: int, direction: bool):
         for step in range(steps):
             self.stepperMotor.motor_run(self.GPIO_PINS, steps=1, ccwise=direction, wait=self.speed, initdelay=0)
             self.stepsDone += 1
@@ -60,7 +79,6 @@ class StepperMotor:
                 return False
         self.active = False
         return True
-            # self.remainingSteps TODO add remaining steps
         
     def stop(self):
         self.stepperMotor.motor_stop()
@@ -70,7 +88,7 @@ class StepperMotor:
     
         
 class StepperMotorInputControl(StepperMotor):
-    def __init__(self, stepperMotor: RpiMotorLib.BYJMotor, startButton: Button, stopButton: Button, potmeter: StepperMotorSpeedControl) -> None:
+    def __init__(self, stepperMotor: RpiMotorLib.BYJMotor, startButton: RpiButton, stopButton: RpiButton, potmeter: StepperMotorSpeedControl) -> None:
         super().__init__(stepperMotor)
         self.potmeter = potmeter
         self.startButton = startButton
@@ -83,27 +101,32 @@ class StepperMotorInputControl(StepperMotor):
     def rotateByDistance(self, distance: float, direction: stepperDirection):
         self.active = True
         distance = int((self.REVOLUTION_STEP_NUMBER / self.distancePerRevolution) * distance) - self.stepsDone
-        self.stepsDone = 0
+        
         Thread(target=self.rotateBySteps, args=(distance, direction)).start()
         while self.active:
-            self.speed = 0.001 + self.potmeter.readValues() / 50000
-            print(self.speed)
-            if stopButton.is_active:
-                print(False)
+            self.speed = self.potmeter.readValues()
+            if self.stopButton.isClicked():
+                print("motor gepauseerd")
                 self.active = False
+                return False
+        return True
                 
     def activate(self, distance: float, direction: stepperDirection):
-        while True:
-            if not self.isActive() and self.stopButton.is_active: # knop blijft geactiveerd uit vorige script
-                return
-            if self.startButton.is_active:
-                if self.rotateByDistance(distance, direction):
-                    return 
-                
-            
+        self.stepsDone = 0
 
-    
-    
+        while True:
+            try:
+                if not self.isActive() and self.stopButton.isClicked():
+                    print("motor gestopt\n")
+                    return
+                if self.startButton.is_active:
+                    if self.rotateByDistance(distance, direction):
+                        print("motor klaar\n")
+                        return 
+            except KeyboardInterrupt:
+                self.active = False # om de thread te stoppen
+                exit()
+
 def intput(message: object = "", wrongInputMessage: str = "Input must be an int or float") -> float:
     """
     gives an input prompt and tries to convert it to an number (float), on succes the input will be converted and returned. 
@@ -116,25 +139,22 @@ def intput(message: object = "", wrongInputMessage: str = "Input must be an int 
             print(wrongInputMessage)
             
         
-    
-    
-startButton = Button(5)
-stopButton = Button(6)
+#* init objects   
+startButton = RpiButton(5)
+stopButton = RpiButton(6)
 potmeter = StepperMotorSpeedControl(0)
     
-
 stepperMotor = RpiMotorLib.BYJMotor("stepperMotor")
 stepperMotorController = StepperMotorInputControl(stepperMotor, startButton, stopButton, potmeter)
 stepperMotorController.setDistancePerRevolution(6)
 
-def resetVariables():
-    global reverseMotor
-    reverseMotor = False
-    
+
+#* main   
 while True:
-    resetVariables()
+    reverseMotor = False
     distance = intput("geef de afstand in milimeter op (negatief om terug te draaien): ")
     if distance < 0:
         reverseMotor = True
+        distance = abs(distance)
 
     stepperMotorController.activate(distance, reverseMotor)
