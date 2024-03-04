@@ -1,4 +1,5 @@
-from gpiozero import Button, LED, Servo
+from gpiozero import Button, LED, AngularServo
+import time
 
 class RpiButton(Button):
     """
@@ -20,7 +21,9 @@ class RpiButton(Button):
 
 class DRScore:
     def __init__(self, servoPin: int, drsPin: int, brake: Button, indicationLedPin: int) -> None:
-        self.servo = Servo(servoPin)
+        self.servo = AngularServo(servoPin)
+        self.servo.angle = 15
+        self.servo.detach()
         self.drsButton = RpiButton(drsPin)
         self.brakeButton = brake
         self.indicationLed = LED(indicationLedPin)
@@ -41,22 +44,59 @@ class DRScore:
             self._closeDrs()
         
     def _openDrs(self):
-        self.servo.max()
+        self.servo.angle = 75
+        
     
     def _closeDrs(self):
-        self.servo.close()
+        self.servo.angle = 15
         
     def updateIndicationLed(self):
-        self.indicationLed = self.drsStatus 
+        if self.drsStatus:
+            self.indicationLed.on()
+        else:
+            self.indicationLed.off()
         
     def DRScontrol(self):
         self._setStatusByButton()
         self._setStatusByBrake()
         self.updateIndicationLed()
+        print(self.servo.value)
+        time.sleep(0.1)
+        self.servo.detach()
+        
+class DRS(DRScore):
+    def __init__(self, servoPin: int, drsPin: int, brake: Button, indicationLedPin: int) -> None:
+        super().__init__(servoPin, drsPin, brake, indicationLedPin)
+        self.active = False
+        self.deActivating = False
+        self.buttonClickedAt = 0
+        
+        self.START_TIME = 1.765 # TODO change names
+        self.STOP_TIME = 1.876
+        
+    def DRScontrol(self):
+        if self.active:
+            super().DRScontrol()
+            self.deActivationSequence()
+        else:
+            self.activationSequence()
+        
+    def activationSequence(self):
+        if self.drsButton.is_held and not self.deActivating:
+            if self.drsButton.held_time > self.START_TIME:
+                self.active = True
+    
+    def deActivationSequence(self):
+        if self.drsButton.is_held:
+            if self.drsButton.held_time > self.STOP_TIME:
+                self.active = False
+            
+    
+
         
 
 brake = Button(3)
-drsSystem = DRScore(17, 2, brake, 4)
+drsSystem = DRS(17, 2, brake, 4)
 
 while True:
     drsSystem.DRScontrol()
