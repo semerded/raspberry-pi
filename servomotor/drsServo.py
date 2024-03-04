@@ -85,11 +85,18 @@ class DRS(DRScore):
         if self.drsButton.is_held and not self.deActivating:
             if self.drsButton.held_time > self.START_TIME:
                 self.active = True
+        if not self.drsButton.is_held:
+            self.deActivating = False
     
     def deActivationSequence(self):
-        if self.drsButton.is_held:
+        if self.drsButton.is_held and self.deActivating:
             if self.drsButton.held_time > self.STOP_TIME:
                 self.active = False
+                self._closeDrs()
+                time.sleep(0.1)
+                exit()
+        if not self.drsButton.is_held:
+            self.deActivating = True                
             
     
 
