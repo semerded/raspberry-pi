@@ -69,10 +69,9 @@ class DRS(DRScore):
         super().__init__(servoPin, drsPin, brake, indicationLedPin)
         self.active = False
         self.deActivating = False
-        self.buttonClickedAt = 0
         
-        self.START_TIME = 1.765 # TODO change names
-        self.STOP_TIME = 1.876
+        self.REQUIRED_ACTIVATION_TIME = 1.765
+        self.REQUIRED_DEACTIVATION_TIME = 1.876
         
     def DRScontrol(self):
         if self.active:
@@ -83,14 +82,14 @@ class DRS(DRScore):
         
     def activationSequence(self):
         if self.drsButton.is_held and not self.deActivating:
-            if self.drsButton.held_time > self.START_TIME:
+            if self.drsButton.held_time > self.REQUIRED_ACTIVATION_TIME:
                 self.active = True
         if not self.drsButton.is_held:
             self.deActivating = False
     
     def deActivationSequence(self):
         if self.drsButton.is_held and self.deActivating:
-            if self.drsButton.held_time > self.STOP_TIME:
+            if self.drsButton.held_time > self.REQUIRED_DEACTIVATION_TIME:
                 self.active = False
                 self._closeDrs()
                 time.sleep(0.1)
