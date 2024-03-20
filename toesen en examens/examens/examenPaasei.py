@@ -1,5 +1,5 @@
 from gpiozero import Button, AngularServo, PWMOutputDevice
-import spidev, Adafruit_DHT, time
+import Adafruit_DHT
 from threading import Thread
 
 running = True
@@ -22,7 +22,6 @@ class RpiButton(Button):
         return False
 
 
-    
 class DHT11:
     def __init__(self) -> None:
         self.humidity: float = 0
@@ -45,14 +44,15 @@ class DHT11:
             self.temperature = _temperature
         return self.humidity, self.temperature
 
+
 class MixerController():
+    mixerSpeedMapping = {1: 0, 2: 25, 3: 50, 4: 75, 5: 100}
     def __init__(self, motorPin: int, increaseSpeed: RpiButton, decreaseSpeed: RpiButton, confirm: RpiButton):
         self.mixMotor = PWMOutputDevice(motorPin)
         self.increaseSpeedButton = increaseSpeed
         self.decreaseSpeedButton = decreaseSpeed
         self.confirmSpeedButton = confirm
         self.currentSpeedStep = 1
-        self.currentSpeed = 0
         
     def mainLoop(self):
         self._readIncreaseButton()
@@ -71,7 +71,7 @@ class MixerController():
         
     def _readConfirmButton(self):
         if self.confirmSpeedButton.isClicked():
-            self.mixMotor.value = (self.currentSpeedStep - 1) * 0.25
+            self.mixMotor.value = self.mixerSpeedMapping[self.currentSpeedStep] / 100
             print("motorsnelheid is succesvol geupdate")
             
             
@@ -82,7 +82,7 @@ class HumidityController(DHT11):
         self.servo = servo
 
     def startThread(self): # threaded
-        Thread(target=self._threadedMainLoop)
+        Thread(target=self._threadedMainLoop).start()
         
     def _threadedMainLoop(self):
         while running:
@@ -93,19 +93,15 @@ class HumidityController(DHT11):
         self.controlAirChannelWithHumidity(humidity)
         
     def controlAirChannelWithHumidity(self, humidity: float):
-        for requiredHumidity, servoAngle in self.airChannelAngleMapping:
+        for requiredHumidity, servoAngle in self.airChannelAngleMapping.items():
             if humidity >= requiredHumidity:
-                self.servo.angle = servoAngle
+                self.servo.angle = servoAngle - 90
                 break
-                # time.sleep(0.2)
-                # self.servo.detach()
                 
-                
-        
 
 decreaseSpeedButton = RpiButton(5)
 increaseSpeedButton = RpiButton(6)
-confirmSpeedButton = RpiButton(7)
+confirmSpeedButton = RpiButton(21)
 
 mixerController = MixerController(motorPin=12, increaseSpeed=increaseSpeedButton, decreaseSpeed=decreaseSpeedButton, confirm=confirmSpeedButton)
 
@@ -120,3 +116,4 @@ while True:
     except KeyboardInterrupt:
         running = False
         exit()
+        
