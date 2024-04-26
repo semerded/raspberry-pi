@@ -1,6 +1,6 @@
 import serial as Serial, time
 
-perviousTime: int
+perviousTime: int = 0
 currentTime: int = time.time()
 INTERVAL: int = 1000
 
@@ -23,5 +23,6 @@ if __name__ == '__main__':
                 continue
         
         if currentTime - perviousTime >= INTERVAL:
-            Serial.write(b"%s\n" %motorSpeed)
+            serial.write(b"%s\n" %bytes(motorSpeed))
+            previousTime = currentTime
             
