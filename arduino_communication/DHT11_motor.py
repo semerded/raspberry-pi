@@ -1,10 +1,10 @@
 import serial as Serial, time
 
-perviousTime: int = 0
+previousTime: int = 0
 currentTime: int = time.time()
-INTERVAL: int = 1000
+INTERVAL: int = 1
 
-motorSpeed = 0
+motorSpeed = 255
 
 if __name__ == '__main__':
     serial = Serial.Serial('/dev/ttyACM0', 9600, timeout=1)
@@ -22,7 +22,8 @@ if __name__ == '__main__':
             except ValueError:
                 continue
         
-        if currentTime - perviousTime >= INTERVAL:
-            serial.write(b"%s\n" %bytes(motorSpeed))
+        if currentTime - previousTime >= INTERVAL:
+            serial.write(str(f"{motorSpeed}\n").encode('ascii'))
+            # print(motorSpeed)
             previousTime = currentTime
             
