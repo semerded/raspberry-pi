@@ -7,13 +7,6 @@ INTERVAL: int = 1
 
 motorSpeed: int = 0
 
-MOTORSPEED_MAPPING_TEMPERATURE = (
-    (
-        20,
-
-    )
-)
-
 def getMotorSpeed(temperature, humidity):
     if temperature > 40:
         return 255
@@ -27,9 +20,6 @@ def getMotorSpeed(temperature, humidity):
         return 50
     else:
         return 0
-        
-        
-
 
 if __name__ == '__main__':
     serial = Serial.Serial('/dev/ttyACM0', 9600, timeout=1)
@@ -40,8 +30,7 @@ if __name__ == '__main__':
 
         if serial.in_waiting > 0:
             dhtValue = serial.readline().decode('utf-8').rstrip()
-            print(dhtValue)
-
+            
             try:
                 temperature, humidity = dhtValue.split(";")
                 motorSpeed = getMotorSpeed(int(temperature), int(humidity))
@@ -50,5 +39,4 @@ if __name__ == '__main__':
 
         if currentTime - previousTime >= INTERVAL:
             serial.write(str(f"{motorSpeed}\n").encode('ascii'))
-            # print(motorSpeed)
             previousTime = currentTime
