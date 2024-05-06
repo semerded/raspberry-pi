@@ -1,12 +1,28 @@
-# import I2C_LDC as LCD
-# import busio, board, digitalio
-# import adafruit_blinka, bme280
+import time, board, adafruit_bh1750, smbus2, bme280, I2C_LDC
 
-# I2C = busio.I2C(board.SCL, board.SDA)
-# lcd = LCD.lcd()
+# bme280
+port = 1
+address = 0x76
+bus = smbus2.SMBus(port)
+calibration_params = bme280.load_calibration_params(bus, address)
 
-# #76 bme280
-
-# bme = bme280
+lcd = I2C_LDC.lcd()
 
 
+# bh1750
+i2c = board.I2C()
+sensor = adafruit_bh1750.BH1750(i2c)
+
+while True:
+    bme280data = bme280.sample(bus, address, calibration_params)
+    temperature = bme280data.temperature
+    pressure = bme280data.pressure
+    humidity = bme280data.humidity
+    
+    lightLevel = sensor.lux
+    
+    lcd.lcd_display_string(f"{round(temperature, 2)}°C|{round(humidity)}%")
+    lcd.lcd_display_string(f"{round(pressure, 2)}hPa|{round(lightLevel, 2)}Lux")
+    
+    
+    time.sleep(1)
