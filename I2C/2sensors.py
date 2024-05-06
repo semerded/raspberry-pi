@@ -21,7 +21,7 @@ while True:
     
     lightLevel = sensor.lux
     
-    lcd.lcd_display_string(f"{round(temperature,2)}°C|{round(lightLevel, 1)}Lux")
+    lcd.lcd_display_string(f"{round(temperature,2)}oC|{round(lightLevel, 1)}Lux")
     lcd.lcd_display_string(f"{round(pressure, 2)}hPa|{round(humidity)}%", line=2)
     
     
