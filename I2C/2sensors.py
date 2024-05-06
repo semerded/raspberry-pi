@@ -6,8 +6,8 @@ address = 0x76
 bus = smbus2.SMBus(port)
 calibration_params = bme280.load_calibration_params(bus, address)
 
+# lcd
 lcd = I2C_LDC.lcd()
-
 
 # bh1750
 i2c = board.I2C()
