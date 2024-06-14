@@ -73,15 +73,13 @@ def ThreadedTemperatureControl():
 #################################
 
 
-previousButtonPressTime: float = time.time()
-currentButtonPressTime: float = time.time()
 BUTTON_PRESS_INTERVAL: float = 1.7
 
 RGB_IO_PINS = (11, 12, 13)
 RGB_PWM_PINS = []
 
 BUTTON_IO_PINS = (14, 15, 16)
-BUTTONS = (Button(BUTTON_IO_PINS[0]), Button(BUTTON_IO_PINS[1]), Button(BUTTON_IO_PINS[2]))
+BUTTONS = [Button(BUTTON_IO_PINS[0]), Button(BUTTON_IO_PINS[1]), Button(BUTTON_IO_PINS[2])]
 buttonsActive = [0, 0, 0]
 
 for index, pin in enumerate(RGB_IO_PINS): # RGB PWM setup
@@ -99,14 +97,18 @@ def setRGB_LED_Color(r: int, g: int, b: int):
 
 
 RGB_LED_COLOR_LISTING: dict[list[bool], tuple[int]] = {
-    [True, False, False]: (255, 0, 0),
-    [False, True, False]: (255, 130, 0),
-    [False, False, True]: (255, 255, 0),
-    [True, True, False]: (0, 255, 0),
-    [False, True, True]: (0, 0, 255),
-    [True, False, True]: (255, 0, 255)
+    (True, False, False): (255, 0, 0),
+    (False, True, False): (255, 130, 0),
+    (False, False, True): (255, 255, 0),
+    (True, True, False): (0, 255, 0),
+    (False, True, True): (0, 0, 255),
+    (True, False, True): (255, 0, 255)
 }
 
+def checkHeldTimeThreshold(button: Button):
+    if button.held_time != None:
+        return button.held_time  >= BUTTON_PRESS_INTERVAL
+    return False
 
 
 
@@ -114,21 +116,21 @@ if __name__ == "__main__":
     Thread(target=ThreadedTemperatureControl).start()
     
     try:
-        while True: # main thread
-            if BUTTONS[0].is_active or BUTTONS[1].is_active or BUTTONS[2].is_active:
-                currentButtonPressTime = time.time()
-            
-                if currentButtonPressTime - previousButtonPressTime >= BUTTON_PRESS_INTERVAL:
-                    previousButtonPressTime = currentButtonPressTime
-                    
+        while True: # main thread    
+            try:     
+                if checkHeldTimeThreshold(BUTTONS[0]) or checkHeldTimeThreshold(BUTTONS[1]) or checkHeldTimeThreshold(BUTTONS[2]):
                     for index, button in enumerate(BUTTONS):
                         buttonsActive[index] = button.is_active
-                    
+                        
+                    buttonsActive = tuple(buttonsActive)
                     if buttonsActive in RGB_LED_COLOR_LISTING.keys():
                         setRGB_LED_Color(*RGB_LED_COLOR_LISTING[buttonsActive])
+            except TypeError:
+                pass # held time geeft None terug als hij niet is ingedrukt
     except KeyboardInterrupt:
         active = False
         exit(130)
+    
     except Exception:
         active = False
         exit(1)
