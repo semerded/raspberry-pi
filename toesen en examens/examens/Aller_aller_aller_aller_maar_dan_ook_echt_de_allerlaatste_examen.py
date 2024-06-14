@@ -131,8 +131,9 @@ if __name__ == "__main__":
         active = False
         exit(130)
     
-    except Exception:
+    except Exception as e:
         active = False
+        print(e.with_traceback())
         exit(1)
 
             
